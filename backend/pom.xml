@@ -2,12 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- =========================================================
-         Spring Boot
-         ========================================================= -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -15,94 +11,65 @@
         <relativePath/>
     </parent>
 
-    <!-- =========================================================
-         Project
-         ========================================================= -->
     <groupId>com.example</groupId>
     <artifactId>authapp</artifactId>
-    <version>0.3.0</version>
-
+    <version>0.4.0</version>
     <name>authapp</name>
-    <description>
-        Auth system backend - Step 3
-        (email/password + Google OAuth2 + Passkey/WebAuthn)
-    </description>
+    <description>Auth system backend - Step 4 (email/password + Google OAuth2 + Passkey/WebAuthn, Render-ready)</description>
 
-    <!-- =========================================================
-         Properties
-         ========================================================= -->
     <properties>
-
         <java.version>21</java.version>
-
         <jjwt.version>0.12.6</jjwt.version>
-
-        <!--
-            Spring Boot 3.3.4 manages Jackson 2.17.2.
-
-            Yubico WebAuthn 2.9.0 transitively references
-            Jackson artifacts. Explicitly pin Jackson to the
-            stable version managed by Spring Boot.
-        -->
-        <jackson-bom.version>2.17.2</jackson-bom.version>
-
     </properties>
 
-    <!-- =========================================================
-         Dependency Management
-         ========================================================= -->
+    <!--
+      Works around an upstream Maven Central publishing bug: com.yubico:webauthn-server-core:2.9.0
+      transitively pulls in com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.5, and that
+      specific released artifact's own POM (as published) points to jackson-databind:2.18.9-SNAPSHOT,
+      which was never published to Maven Central and only briefly existed in FasterXML's internal
+      snapshot repo. This is a known, recurring class of bug in FasterXML's release tooling (has
+      happened across several past Jackson releases) — not something wrong in this app's own code.
+      Fix: explicitly manage jackson-dataformat-cbor's version ourselves, pinned to
+      ${jackson-bom.version} — the same Jackson release Spring Boot's parent POM already manages for
+      jackson-databind/jackson-core/jackson-annotations elsewhere in this app. Because a dependency
+      version declared directly in THIS project's own <dependencyManagement> always wins over any
+      version pulled in transitively (e.g. from webauthn-server-core's own imported BOM), this
+      guarantees Maven never touches the broken 2.18.5 POM, and keeps every Jackson module in the
+      whole app on one single, consistent, real release.
+    -->
     <dependencyManagement>
         <dependencies>
-
-            <!--
-                Force Jackson BOM to a stable released version.
-                This prevents Maven from selecting incompatible
-                Jackson 2.18.x / 2.18.9-SNAPSHOT artifacts.
-            -->
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-cbor</artifactId>
                 <version>${jackson-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
-    <!-- =========================================================
-         Dependencies
-         ========================================================= -->
     <dependencies>
-
-        <!-- =====================================================
-             Spring Boot
-             ===================================================== -->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-
-
-        <!-- =====================================================
-             Lombok
-             ===================================================== -->
+        <!-- Step 4: exposes /actuator/health (public, see SecurityConfig), used as
+             Render's Health Check Path so Render can tell the deploy is actually up. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -110,50 +77,35 @@
             <optional>true</optional>
         </dependency>
 
-
-        <!-- =====================================================
-             PostgreSQL
-             ===================================================== -->
-
+        <!-- Postgres -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-
-        <!-- =====================================================
-             Flyway
-             ===================================================== -->
-
+        <!-- Flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
-
-        <!-- =====================================================
-             JWT
-             ===================================================== -->
-
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
@@ -161,146 +113,65 @@
             <scope>runtime</scope>
         </dependency>
 
-
-        <!-- =====================================================
-             Jackson
-             ===================================================== -->
-
-        <!--
-            Explicitly declare Jackson Databind.
-            This ensures Maven selects 2.17.2 instead of
-            the problematic 2.18.9-SNAPSHOT.
-        -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-bom.version}</version>
-        </dependency>
-
-        <!--
-            Explicitly pin CBOR as well.
-
-            Yubico WebAuthn:
-                webauthn-server-core:2.9.0
-                    -> yubico-util:2.9.0
-                    -> jackson-dataformat-cbor:2.18.5
-
-            We override it with 2.17.2.
-        -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-cbor</artifactId>
-            <version>${jackson-bom.version}</version>
-        </dependency>
-
-
-        <!-- =====================================================
-             dotenv
-             ===================================================== -->
-
+        <!-- dotenv support for local .env loading -->
         <dependency>
             <groupId>me.paulschwarz</groupId>
             <artifactId>spring-dotenv</artifactId>
             <version>4.0.0</version>
         </dependency>
 
-
-        <!-- =====================================================
-             Google Identity Services
-             ===================================================== -->
-
-        <!--
-            Google ID token verification.
-
-            This flow only needs the Google OAuth Client ID.
-            No Client Secret is required for backend ID-token
-            verification.
-        -->
+        <!-- Google ID token verification (Google Identity Services login/registration flow).
+             ID-token verification only needs the OAuth2 Client ID, no client secret. -->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
             <version>2.7.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client-gson</artifactId>
             <version>1.45.0</version>
         </dependency>
 
-
-        <!-- =====================================================
-             Passkey / WebAuthn
-             ===================================================== -->
-
-        <!--
-            Yubico WebAuthn Server.
-
-            Provides:
-            - WebAuthn registration
-            - Attestation validation
-            - Assertion validation
-            - Challenge verification
-            - Signature verification
-            - Signature-counter replay protection
-        -->
+        <!-- Step 3: Passkey / WebAuthn. Yubico's library implements the full
+             W3C WebAuthn Relying Party spec (challenge generation, attestation/
+             assertion validation, signature-counter replay checks) so we don't
+             hand-roll any of the cryptographic verification ourselves. -->
         <dependency>
             <groupId>com.yubico</groupId>
             <artifactId>webauthn-server-core</artifactId>
             <version>2.9.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.dataformat</groupId>
-                    <artifactId>jackson-dataformat-cbor</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-
-        <!-- =====================================================
-             Caffeine
-             ===================================================== -->
-
-        <!--
-            In-memory TTL cache for pending WebAuthn challenges.
-        -->
+        <!-- In-memory TTL cache for pending WebAuthn registration/login challenges.
+             The API is stateless (JWT-in-cookie, no HttpSession), so challenges
+             created by startRegistration/startAssertion are held here briefly
+             (keyed by a random requestId handed to the client) until the matching
+             finishRegistration/finishAssertion call arrives or the entry expires. -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>3.1.8</version>
         </dependency>
 
-
-        <!-- =====================================================
-             Tests
-             ===================================================== -->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
-    <!-- =========================================================
-         Build
-         ========================================================= -->
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
         </plugins>
     </build>
-
 </project>

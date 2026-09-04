@@ -29,10 +29,14 @@ docker run --env-file .env -p 8080:8080 authapp-backend
 
 ## Deploy lên Render
 
-- Tạo **PostgreSQL** instance trên Render, lấy connection string (Internal Database URL).
-- Tạo **Web Service**, trỏ root directory vào `backend/`, Render sẽ tự build bằng `Dockerfile`.
-- Khai báo biến môi trường trong dashboard Render: `DB_URL`, `DB_USER`, `DB_PASS`, `JWT_SECRET`, `FRONTEND_URL` (URL frontend đã deploy), `COOKIE_SECURE=true`, `GOOGLE_CLIENT_ID`.
-- Lưu ý: `DB_URL` cho Render Postgres có dạng `jdbc:postgresql://<host>:5432/<db>` (Render cung cấp dạng `postgres://...`, cần đổi tiền tố thành `jdbc:postgresql://...`).
+Hướng dẫn đầy đủ, đã chốt (gói Free, domain mặc định `*.onrender.com`): xem
+**[`../DEPLOY.md`](../DEPLOY.md)** ở gốc project. Tóm tắt riêng phần backend:
+
+- Tạo **PostgreSQL** instance trên Render (gói Free), lấy connection string (Internal Database URL).
+- Tạo **Web Service** (gói Free), trỏ root directory vào `backend/`, Render sẽ tự build bằng `Dockerfile`.
+- Đặt **Health Check Path** = `/actuator/health` trong Advanced settings.
+- Khai báo biến môi trường trong dashboard Render: `DB_URL`, `DB_USER`, `DB_PASS`, `JWT_SECRET`, `FRONTEND_URL` (URL frontend đã deploy), `COOKIE_SECURE=true`, `GOOGLE_CLIENT_ID`, `PASSKEY_RP_ID`, `PASSKEY_ORIGIN`. **Không** đặt `PORT` hay `SERVER_PORT` — Render tự inject `PORT` và app đã tự đọc biến này.
+- Lưu ý: `DB_URL` cho Render Postgres có dạng `jdbc:postgresql://<host>/<db>` (Render cung cấp dạng `postgres://...`, cần đổi tiền tố thành `jdbc:postgresql://...`).
 - Nhớ thêm URL frontend Render vào "Authorized JavaScript origins" của Google OAuth Client ID.
 
 ## Endpoints (Bước 3)
@@ -57,7 +61,7 @@ docker run --env-file .env -p 8080:8080 authapp-backend
 - Thư viện: `com.yubico:webauthn-server-core` — xử lý toàn bộ sinh challenge, xác thực attestation (đăng ký) và assertion (đăng nhập), kiểm tra `origin`/`rpId`, chống replay qua signature counter.
 - `security/webauthn/JpaCredentialRepository` implement interface `CredentialRepository` của thư viện, dựa trên `UserRepository` + `PasskeyCredentialRepository` có sẵn — không thêm bảng mới ngoài 2 cột nhỏ ở migration `V2`.
 - "User handle" (định danh WebAuthn nội bộ, tách biệt với email) được suy ra trực tiếp từ `User.id` (UUID → 16 byte), không cần cột riêng.
-- Challenge tạm thời (giữa bước "start" và "finish" của mỗi ceremony) lưu trong cache bộ nhớ (`Caffeine`, TTL 5 phút, key là `requestId` ngẫu nhiên trả về cho client) — API vẫn hoàn toàn stateless (JWT-in-cookie), đây là mảnh state ngắn hạn duy nhất và giả định 1 instance backend (đủ cho local + Render free tier ở Bước 4; nếu sau này scale nhiều instance, thay bằng Redis).
+- Challenge tạm thời (giữa bước "start" và "finish" của mỗi ceremony) lưu trong cache bộ nhớ (`Caffeine`, TTL 5 phút, key là `requestId` ngẫu nhiên trả về cho client) — API vẫn hoàn toàn stateless (JWT-in-cookie), đây là mảnh state ngắn hạn duy nhất và giả định 1 instance backend (đúng với Render gói Free/Starter — 1 instance; nếu sau này scale nhiều instance, thay bằng Redis).
 - Quyết định sản phẩm đã chốt với người dùng: **tối đa 1 passkey/tài khoản** (ràng buộc unique ở DB), **đăng nhập kiểu usernameless/discoverable** (không cần gõ email trước).
 
 ## Ghi chú quan trọng

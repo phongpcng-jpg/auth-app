@@ -122,11 +122,15 @@ git push -u origin main
 
 ## Deploy lên Render (Bước 4)
 
-Kế hoạch chi tiết — chưa thực hiện — xem file **[`DEPLOY.md`](./DEPLOY.md)**.
-File đó liệt kê rõ thứ tự tạo Postgres → backend Web Service → frontend
-Static Site → vòng lại cập nhật domain thật cho `PASSKEY_RP_ID`/`PASSKEY_ORIGIN`,
-cùng danh sách biến môi trường cần khai báo trên Render dashboard cho từng
-service, và 3 điểm còn cần bạn xác nhận trước khi bắt tay thực hiện.
+Hướng dẫn chi tiết, **đã chốt và sẵn sàng thực hiện**: xem file
+**[`DEPLOY.md`](./DEPLOY.md)** — gói **Free** cho cả backend + database,
+domain mặc định `*.onrender.com`. File đó liệt kê rõ thứ tự tạo Postgres →
+backend Web Service → frontend Static Site (kèm rule rewrite bắt buộc cho
+Angular Router) → vòng lại cập nhật domain thật cho
+`PASSKEY_RP_ID`/`PASSKEY_ORIGIN`, cùng danh sách biến môi trường cần khai
+báo trên Render dashboard cho từng service, và các thay đổi code đã thực
+hiện để deploy trơn tru (cổng lắng nghe theo `PORT` của Render, health check
+endpoint thật).
 
 ## Cấu trúc thư mục
 ```

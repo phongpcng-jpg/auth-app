@@ -1,5 +1,18 @@
 server:
-  port: ${SERVER_PORT:8080}
+  # Render injects PORT and requires the app to bind to it (default 10000 on
+  # Render if not overridden). Locally, PORT is unset, so this falls back to
+  # SERVER_PORT (from backend/.env, default 8080). Never set PORT yourself in
+  # backend/.env — leave it to Render.
+  port: ${PORT:${SERVER_PORT:8080}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
 
 spring:
   application:
@@ -36,9 +49,9 @@ app:
   passkey:
     # WebAuthn Relying Party ID: must be the frontend's domain (no scheme/port),
     # or a parent domain of it. "localhost" works for local dev because browsers
-    # treat http://localhost as a secure context. Update this (and passkey-origin)
-    # to the real Render frontend domain in Step 4 — a passkey created under one
-    # RP ID cannot be used to log in under a different one.
+    # treat http://localhost as a secure context. On Render, set this to the
+    # real frontend's onrender.com subdomain — see DEPLOY.md. A passkey
+    # created under one RP ID cannot be used to log in under a different one.
     rp-id: ${PASSKEY_RP_ID:localhost}
     rp-name: ${PASSKEY_RP_NAME:Auth App}
     # Must exactly match the frontend origin the browser sends (scheme+host+port).

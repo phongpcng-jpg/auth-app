@@ -43,8 +43,11 @@ ghi đè mỗi lần chạy 2 lệnh đó, không cần sửa tay và sửa tay 
 
 ## Deploy lên Render (Bước 4)
 
-- Tạo **Static Site** (hoặc Web Service nếu muốn tự SSR sau này) trên Render,
-  trỏ **Root Directory** vào `frontend/` (repo monorepo — xem README gốc).
+Hướng dẫn đầy đủ, đã chốt (gói Free, domain mặc định `*.onrender.com`): xem
+**[`../DEPLOY.md`](../DEPLOY.md)** ở gốc project. Tóm tắt riêng phần frontend:
+
+- Tạo **Static Site** trên Render (gói Free), trỏ **Root Directory** vào
+  `frontend/` (repo monorepo — xem README gốc).
 - Build Command: `npm install && npm run build`
 - Publish Directory: `dist/frontend`
 - Khai báo Environment Variables trong dashboard Render (Settings > Environment):
@@ -52,6 +55,11 @@ ghi đè mỗi lần chạy 2 lệnh đó, không cần sửa tay và sửa tay 
   - `GOOGLE_CLIENT_ID` = cùng giá trị với `GOOGLE_CLIENT_ID` bên backend
 - Không cần file `.env` nào trên Render — build command tự đọc 2 biến trên
   từ dashboard nhờ `scripts/generate-env.js`.
+- ⚠️ **Bắt buộc**: vào tab **Redirects/Rewrites** của Static Site, thêm rule
+  `/*` → `/index.html` (Action: **Rewrite**). Thiếu bước này thì truy cập
+  trực tiếp/refresh vào bất kỳ route nào ngoài `/` (vd `/menu`,
+  `/register/email`) sẽ bị lỗi 404, vì app dùng Angular Router kiểu HTML5
+  (client-side routing) và Render không tự nhận biết điều này.
 - Sau khi có URL frontend thật, quay lại cập nhật:
   - `FRONTEND_URL`, `COOKIE_SECURE=true` bên backend (CORS + cookie).
   - `PASSKEY_RP_ID`, `PASSKEY_ORIGIN` bên backend (đổi sang domain frontend thật — bắt buộc cho passkey).
