@@ -20,32 +20,15 @@
     <properties>
         <java.version>21</java.version>
         <jjwt.version>0.12.6</jjwt.version>
-    </properties>
 
-    <!--
-      Works around an upstream Maven Central publishing bug: com.yubico:webauthn-server-core:2.9.0
-      transitively pulls in com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.18.5, and that
-      specific released artifact's own POM (as published) points to jackson-databind:2.18.9-SNAPSHOT,
-      which was never published to Maven Central and only briefly existed in FasterXML's internal
-      snapshot repo. This is a known, recurring class of bug in FasterXML's release tooling (has
-      happened across several past Jackson releases) — not something wrong in this app's own code.
-      Fix: explicitly manage jackson-dataformat-cbor's version ourselves, pinned to
-      ${jackson-bom.version} — the same Jackson release Spring Boot's parent POM already manages for
-      jackson-databind/jackson-core/jackson-annotations elsewhere in this app. Because a dependency
-      version declared directly in THIS project's own <dependencyManagement> always wins over any
-      version pulled in transitively (e.g. from webauthn-server-core's own imported BOM), this
-      guarantees Maven never touches the broken 2.18.5 POM, and keeps every Jackson module in the
-      whole app on one single, consistent, real release.
-    -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-cbor</artifactId>
-                <version>${jackson-bom.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <!--
+            Spring Boot 3.3.4 manages Jackson 2.17.2.
+            Explicitly pin the Jackson BOM version to avoid
+            Yubico WebAuthn transitively resolving Jackson
+            2.18.x / 2.18.9-SNAPSHOT artifacts.
+        -->
+        <jackson-bom.version>2.17.2</jackson-bom.version>
+    </properties>
 
     <dependencies>
         <dependency>
