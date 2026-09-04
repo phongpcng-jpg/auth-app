@@ -1,0 +1,48 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Đăng nhập</h1>
+    <p class="card-subtitle">Nhập email và mật khẩu để tiếp tục.</p>
+
+    @if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    }
+
+    <form (ngSubmit)="submit()">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" [(ngModel)]="email" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label for="password">Mật khẩu</label>
+        <input id="password" type="password" name="password" [(ngModel)]="password" autocomplete="current-password" />
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading()">
+        {{ loading() ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+      </button>
+    </form>
+
+    <div class="divider-row">hoặc</div>
+
+    <div class="stack">
+      <div class="google-btn-wrap">
+        <button type="button" class="btn btn-secondary" [disabled]="loading()">
+          Đăng nhập với Google
+        </button>
+        <div #googleBtnContainer class="google-btn-overlay"></div>
+      </div>
+      @if (passkeySupported) {
+        <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="loginWithPasskey()">
+          Đăng nhập với Passkey
+        </button>
+      } @else {
+        <p class="footer-note">Trình duyệt này chưa hỗ trợ Passkey.</p>
+      }
+    </div>
+
+    <p class="footer-note">
+      Chưa có tài khoản? <a routerLink="/register/email">Đăng ký</a>
+    </p>
+  </div>
+</div>

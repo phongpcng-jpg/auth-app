@@ -1,0 +1,34 @@
+<div class="auth-shell">
+  <div class="card card-wide">
+    <h1 class="card-title">Thông tin cá nhân</h1>
+
+    @if (loading()) {
+      <p class="card-subtitle">Đang tải...</p>
+    } @else if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    } @else if (user()) {
+      <div class="info-list">
+        <div class="info-row">
+          <span class="info-label">Họ và tên</span>
+          <span class="info-value">{{ user()!.fullName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ user()!.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Số điện thoại</span>
+          <span class="info-value">{{ user()!.phoneNumber || 'Chưa cập nhật' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Ngày tạo tài khoản</span>
+          <span class="info-value">{{ user()!.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+    }
+
+    <p class="footer-note">
+      <a routerLink="/menu">← Quay lại Menu</a>
+    </p>
+  </div>
+</div>

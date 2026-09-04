@@ -1,0 +1,41 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Tạo tài khoản</h1>
+    <p class="card-subtitle">Bước 1/4 — Nhập email và xác nhận với Google.</p>
+
+    @if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    }
+    @if (verified()) {
+      <div class="form-alert form-alert-success">Đã xác thực email qua Google: {{ email }}</div>
+    }
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        (ngModelChange)="verified() ? null : renderGoogleButton()"
+        [disabled]="verified()"
+        autocomplete="email"
+      />
+    </div>
+
+    @if (!verified()) {
+      <div class="google-btn-wrap">
+        <button type="button" class="btn btn-primary" [disabled]="verifying()">
+          {{ verifying() ? 'Đang xác nhận...' : 'Xác nhận email với Google' }}
+        </button>
+        <div #googleBtnContainer class="google-btn-overlay"></div>
+      </div>
+    } @else {
+      <button type="button" class="btn btn-primary" (click)="next()">Tiếp tục</button>
+    }
+
+    <p class="footer-note">
+      Đã có tài khoản? <a routerLink="/login">Đăng nhập</a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Quản lý Passkey</h1>
+
+    @if (!hasPasskey()) {
+      <p class="card-subtitle">Bạn chưa thiết lập Passkey nào cho tài khoản này.</p>
+      <div class="stack">
+        <button type="button" class="btn btn-primary" (click)="addPasskey()">Thêm Passkey</button>
+        <button type="button" class="btn btn-secondary" (click)="decline()">Không</button>
+      </div>
+    } @else {
+      <p class="card-subtitle">Tài khoản của bạn đang có một Passkey.</p>
+      <div class="stack">
+        <button type="button" class="btn btn-danger" [disabled]="working()" (click)="removePasskey()">
+          {{ working() ? 'Đang xóa...' : 'Xóa Passkey' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="decline()">Không</button>
+      </div>
+    }
+  </div>
+</div>

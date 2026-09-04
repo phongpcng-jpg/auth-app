@@ -1,0 +1,15 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Menu</h1>
+    <p class="card-subtitle">Chọn một mục để tiếp tục.</p>
+
+    <div class="stack">
+      @for (item of items; track item.route) {
+        <button type="button" class="btn btn-secondary" (click)="go(item.route)">
+          {{ item.label }}
+        </button>
+      }
+      <button type="button" class="btn btn-danger" (click)="logout()">Đăng xuất</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+# Environment variables — never commit real secrets/values.
+# Keep .env.example (safe placeholders) tracked; .env (real local values) is not.
+.env
+.env.*.local
+
+# Maven build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Compiled class files
+*.class
+
+# Logs
+*.log
+
+# IDE
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.factorypath
+/.vscode/
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring Boot
+HELP.md

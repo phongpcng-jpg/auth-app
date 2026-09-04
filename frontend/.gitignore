@@ -1,0 +1,44 @@
+# Environment variables — never commit real secrets/values.
+# Keep .env.example (safe placeholders) tracked; .env (real local values) is not.
+.env
+.env.*.local
+
+# Dependencies
+/node_modules
+
+# Angular build/cache output
+/dist
+/.angular/cache
+/out-tsc
+
+# Angular auto-generated environment files: environment.ts and
+# environment.prod.ts ARE tracked (they hold the safe placeholder values
+# committed to the repo, see .env.example) — scripts/generate-env.js
+# overwrites them locally/on Render at build time from real env vars, but
+# the committed placeholder versions must stay so a fresh clone still
+# compiles before anyone runs `npm start`/`npm run build`.
+
+# IDE
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/extensions.json
+.idea/
+*.iml
+.project
+.classpath
+*.launch
+.settings/
+
+# Misc / OS
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+.DS_Store
+Thumbs.db

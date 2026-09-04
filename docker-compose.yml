@@ -1,0 +1,19 @@
+# Runs only the local Postgres database. Backend and frontend are started
+# separately (see backend/README.md and frontend/README.md) so each can be
+# developed and deployed independently.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: authapp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: authapp
+      POSTGRES_USER: authapp
+      POSTGRES_PASSWORD: authapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - authapp_pgdata:/var/lib/postgresql/data
+
+volumes:
+  authapp_pgdata:

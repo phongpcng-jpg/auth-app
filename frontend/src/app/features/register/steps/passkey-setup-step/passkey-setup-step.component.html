@@ -1,0 +1,21 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Thiết lập Passkey</h1>
+    <p class="card-subtitle">
+      Trình duyệt sẽ yêu cầu bạn xác thực (vân tay, khuôn mặt, mã PIN thiết bị...) để tạo Passkey cho tài khoản này.
+    </p>
+
+    @if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="stack">
+      <button type="button" class="btn btn-primary" [disabled]="submitting()" (click)="setupPasskey()">
+        {{ submitting() ? 'Đang thiết lập...' : 'Thiết lập Passkey ngay' }}
+      </button>
+      <button type="button" class="btn btn-secondary" [disabled]="submitting()" (click)="skip()">
+        Bỏ qua, vào menu
+      </button>
+    </div>
+  </div>
+</div>

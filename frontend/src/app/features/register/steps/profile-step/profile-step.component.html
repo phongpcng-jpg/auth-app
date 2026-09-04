@@ -1,0 +1,24 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Thông tin cá nhân</h1>
+    <p class="card-subtitle">Bước 3/4 — Chỉ họ và tên là bắt buộc.</p>
+
+    @if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    }
+
+    <form (ngSubmit)="submit()">
+      <div class="field">
+        <label for="fullName">Họ và tên *</label>
+        <input id="fullName" type="text" name="fullName" [(ngModel)]="fullName" autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="phoneNumber">Số điện thoại (không bắt buộc)</label>
+        <input id="phoneNumber" type="tel" name="phoneNumber" [(ngModel)]="phoneNumber" autocomplete="tel" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Tiếp tục</button>
+    </form>
+  </div>
+</div>

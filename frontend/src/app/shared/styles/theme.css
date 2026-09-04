@@ -1,0 +1,40 @@
+/*
+  THEME — sửa màu ở đây, toàn bộ app dùng chung các biến này.
+  Không cần sửa file CSS nào khác để đổi bảng màu.
+*/
+:root {
+  /* Nền */
+  --color-bg: #f7f7f5;
+  --color-surface: #ffffff;
+
+  /* Chữ */
+  --color-text: #1f2420;
+  --color-text-muted: #6b7268;
+
+  /* Thương hiệu / nhấn */
+  --color-primary: #2f6f4f;
+  --color-primary-hover: #26593f;
+  --color-primary-contrast: #ffffff;
+
+  /* Trạng thái */
+  --color-danger: #b3413a;
+  --color-danger-bg: #fbecea;
+  --color-success: #2f6f4f;
+  --color-border: #dcded9;
+
+  /* Bo góc, khoảng cách */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.75rem;
+}

@@ -1,0 +1,19 @@
+<div class="auth-shell">
+  <div class="card">
+    <h1 class="card-title">Sử dụng Passkey?</h1>
+    <p class="card-subtitle">Bước 4/4 — Passkey giúp đăng nhập nhanh, không cần mật khẩu.</p>
+
+    @if (errorMessage()) {
+      <div class="form-alert">{{ errorMessage() }}</div>
+    }
+
+    <div class="stack">
+      <button type="button" class="btn btn-primary" [disabled]="submitting()" (click)="chooseYes()">
+        {{ submitting() ? 'Đang tạo tài khoản...' : 'Có, thiết lập Passkey' }}
+      </button>
+      <button type="button" class="btn btn-secondary" [disabled]="submitting()" (click)="chooseNo()">
+        {{ submitting() ? 'Đang tạo tài khoản...' : 'Không, bỏ qua' }}
+      </button>
+    </div>
+  </div>
+</div>
